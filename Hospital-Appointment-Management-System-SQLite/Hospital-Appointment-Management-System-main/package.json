@@ -1,0 +1,17 @@
+{
+  "name": "hospital-appointment-management-system",
+  "version": "2.0.0",
+  "description": "Hospital Appointment Management System (frontend unchanged; storage moved from localStorage to SQLite via an Express server).",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

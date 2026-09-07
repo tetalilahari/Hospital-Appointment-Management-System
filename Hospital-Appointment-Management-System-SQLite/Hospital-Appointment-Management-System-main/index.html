@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Appointment Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/db.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<div id="page-landing" class="page active">
+
+  <header style="position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,184,162,0.1);backdrop-filter:blur(20px);background:rgba(10,22,40,0.7)">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--navy);font-weight:700">+</div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700">Hospital Appointment</div>
+        <div style="font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:1px">Management System</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px">
+      <button class="btn btn-secondary btn-sm" id="header-signin-btn">Sign In</button>
+    </div>
+  </header>
+
+  <div style="padding-top:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding-left:20px;padding-right:20px;gap:60px;text-align:center">
+
+    <div class="landing-header">
+      <h1 class="landing-title">Hospital Appointment<br><span>Management System</span></h1>
+      <p class="landing-sub">Seamlessly connect patients, doctors, and administration.<br>Book appointments, manage schedules, and access health records all in one place.</p>
+    </div>
+
+    <div class="landing-cards">
+      <div class="role-card" id="card-patient">
+        <div class="role-icon">&#x1F3E5;</div>
+        <div class="role-title">Patient Portal</div>
+        <div class="role-desc">Book appointments, view your health records, and manage your consultations with ease.</div>
+        <div class="role-action">Access Portal &rarr;</div>
+      </div>
+      <div class="role-card" id="card-doctor">
+        <div class="role-icon">&#x2695;&#xFE0F;</div>
+        <div class="role-title">Doctor Portal</div>
+        <div class="role-desc">Manage your schedule, view patient appointments, and update consultation status.</div>
+        <div class="role-action">Doctor Login &rarr;</div>
+      </div>
+      <div class="role-card" id="card-admin">
+        <div class="role-icon">&#x1F511;</div>
+        <div class="role-title">Admin Panel</div>
+        <div class="role-desc">Full system control - manage doctors, patients, reports, and system logs.</div>
+        <div class="role-action">Admin Access &rarr;</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:40px;flex-wrap:wrap;justify-content:center;padding-bottom:40px">
+      <div style="text-align:center">
+        <div style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--teal)">6+</div>
+        <div style="font-size:13px;color:var(--white-mid)">Specialist Doctors</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--gold)">24/7</div>
+        <div style="font-size:13px;color:var(--white-mid)">System Availability</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--teal)">3</div>
+        <div style="font-size:13px;color:var(--white-mid)">Role-Based Access</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="auth-modal" class="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" id="modal-close-btn">X</button>
+    <div class="modal-title" id="auth-modal-title">Patient Portal</div>
+    <div class="modal-sub" id="auth-modal-sub">Manage your appointments</div>
+
+    <div class="tab-switcher">
+      <button class="tab-btn active" id="tab-login">Sign In</button>
+      <button class="tab-btn" id="tab-register">Register</button>
+    </div>
+
+    <div id="auth-login-form">
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="login-email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="login-password" placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px">Sign In</button>
+      </form>
+
+      <div style="margin-top:20px;padding:16px;background:var(--white-dim);border-radius:10px;border:1px solid var(--border)">
+        <div style="font-size:12px;color:var(--teal);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.8px">Demo Credentials</div>
+        <div style="font-size:13px;color:var(--white-mid);line-height:1.8">
+          <strong style="color:var(--white)">Patient:</strong> aarav&#64;email.com / pass123<br>
+          <strong style="color:var(--white)">Doctor:</strong> meera&#64;hospital.com / doc123<br>
+          <strong style="color:var(--white)">Admin:</strong> admin&#64;hospital.com / admin123
+        </div>
+      </div>
+    </div>
+
+    <div id="auth-register-form" style="display:none">
+      <form id="register-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="reg-name" placeholder="Your full name" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="reg-email" placeholder="email@example.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="tel" class="form-input" id="reg-phone" placeholder="10-digit number" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Age</label>
+            <input type="number" class="form-input" id="reg-age" placeholder="Your age" min="1" max="120" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <select class="form-select" id="reg-gender" required>
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="reg-password" placeholder="Min 6 characters" required minlength="6">
+        </div>
+
+        <div id="register-doctor-fields" style="display:none">
+          <hr style="border-color:var(--border);margin:16px 0">
+          <div style="font-size:12px;color:var(--teal);font-weight:600;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.8px">Professional Details</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Specialty</label>
+              <input type="text" class="form-input" id="reg-specialty" placeholder="e.g. Cardiology">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Experience (yrs)</label>
+              <input type="number" class="form-input" id="reg-experience" placeholder="Years" min="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Consultation Fee (Rs.)</label>
+            <input type="number" class="form-input" id="reg-fee" placeholder="e.g. 500">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Available Days</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="checkbox" class="day-check" value="Mon" style="accent-color:var(--teal)"> Mon</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="checkbox" class="day-check" value="Tue" style="accent-color:var(--teal)"> Tue</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="checkbox" class="day-check" value="Wed" style="accent-color:var(--teal)"> Wed</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="checkbox" class="day-check" value="Thu" style="accent-color:var(--teal)"> Thu</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="checkbox" class="day-check" value="Fri" style="accent-color:var(--teal)"> Fri</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="checkbox" class="day-check" value="Sat" style="accent-color:var(--teal)"> Sat</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="checkbox" class="day-check" value="Sun" style="accent-color:var(--teal)"> Sun</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Time Slots (comma separated)</label>
+            <input type="text" class="form-input" id="reg-slots" placeholder="09:00, 10:00, 11:00, 14:00">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px">Create Account</button>
+      </form>
+    </div>
+
+    <div id="auth-error" class="error-msg"></div>
+  </div>
+</div>
+
+<div id="booking-modal" class="modal-overlay">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" id="booking-close-btn">X</button>
+
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+      <div style="font-size:48px">&#x1F468;&#x200D;&#x2695;&#xFE0F;</div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700" id="booking-doc-name">-</div>
+        <div style="color:var(--teal);font-size:13px" id="booking-doc-spec">-</div>
+        <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:18px;margin-top:4px" id="booking-doc-fee">-</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Select Date</label>
+      <input type="date" class="form-input" id="booking-date">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Available Time Slots</label>
+      <div id="booking-slots"><p class="text-muted">Select a date to see available slots</p></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Reason for Visit</label>
+      <textarea class="form-textarea" id="booking-reason" placeholder="Brief description of your condition or reason..."></textarea>
+    </div>
+
+    <div id="booking-error" class="error-msg" style="margin-bottom:8px"></div>
+
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" style="flex:1" id="confirm-booking-btn">Confirm Booking</button>
+      <button class="btn btn-secondary" id="cancel-booking-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="page-patient-dashboard" class="page"></div>
+<div id="page-doctor-dashboard" class="page"></div>
+<div id="page-admin-dashboard" class="page"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  document.getElementById('header-signin-btn').addEventListener('click', function() {
+    openAuth('patient');
+  });
+
+  document.getElementById('card-patient').addEventListener('click', function() {
+    openAuth('patient');
+  });
+  document.getElementById('card-doctor').addEventListener('click', function() {
+    openAuth('doctor');
+  });
+  document.getElementById('card-admin').addEventListener('click', function() {
+    openAuth('admin');
+  });
+
+  document.getElementById('modal-close-btn').addEventListener('click', function() {
+    closeAuth();
+  });
+
+  document.getElementById('auth-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeAuth();
+  });
+
+  document.getElementById('tab-login').addEventListener('click', function() {
+    switchAuthTab('login');
+  });
+  document.getElementById('tab-register').addEventListener('click', function() {
+    switchAuthTab('register');
+  });
+
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    handleLogin(e);
+  });
+
+  document.getElementById('register-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    handleRegister(e);
+  });
+
+  document.getElementById('booking-close-btn').addEventListener('click', function() {
+    closeBooking();
+  });
+  document.getElementById('cancel-booking-btn').addEventListener('click', function() {
+    closeBooking();
+  });
+  document.getElementById('booking-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeBooking();
+  });
+
+  document.getElementById('booking-date').addEventListener('change', function() {
+    loadSlots();
+  });
+
+  document.getElementById('confirm-booking-btn').addEventListener('click', function() {
+    confirmBooking();
+  });
+
+});
+</script>
+
+</body>
+</html>
